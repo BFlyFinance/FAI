@@ -1,14 +1,13 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module Admin {
     use 0x1::Errors;
 
     use 0x1::Token;
     use 0x1::ChainId;
-    use 0x1::Debug;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
     const NOT_ADMIN_ADDRESS: u64 = 201;
 
-    const ADMIN_ADDRESS: address = @0xb987F1aB0D7879b2aB421b98f96eFb44 ;
+    const ADMIN_ADDRESS: address = @0x4FFCC98F43ce74668264a0CF6Eebe42b ;
     public fun admin_address(): address {
         Token::token_address<FAI::FAI>()
     }
@@ -19,10 +18,8 @@ module Admin {
 
     public fun is_dev(): bool {
         let id = ChainId::get();
-        Debug::print(&id);
-        id == 254 || id == 255
+        id == 252 || id == 254 || id == 255
     }
-
 
 }
 }

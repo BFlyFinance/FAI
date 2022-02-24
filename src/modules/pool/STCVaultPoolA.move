@@ -1,13 +1,13 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module STCVaultPoolA {
     use 0x1::Signer;
     use 0x1::Errors;
     use 0x1::STC;
     use 0x1::Account;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Admin;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Vault;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::VaultCounter;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Config;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::VaultCounter;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
 
     const POOL_ALREADY_PUBLISHED: u64 = 202;
     const POOL_NOT_PUBLISHED: u64 = 203;

@@ -1,13 +1,13 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module PriceOracle {
 
     use 0x1::Token;
     use 0x1::STC;
     use 0x1::Errors;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAI ;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCOracle;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAIOracle;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Price ;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI ;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCOracle;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAIOracle;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Price ;
 
     const NOT_SUPPROT_TOKEN_TYPE: u64 = 1;
 

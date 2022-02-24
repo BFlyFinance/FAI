@@ -1,9 +1,9 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
     module Treasury {
 
         use 0x1::Token;
         use 0x1::Signer;
-        use 0xb987F1aB0D7879b2aB421b98f96eFb44::Admin;
+        use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
 
         const INVALID_AMOUNT: u64 = 301;
 

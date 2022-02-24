@@ -1,9 +1,9 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 
 module VaultCounter {
     use 0x1::Errors;
     use 0x1::Signer;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Admin;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
 
 
     const GUID_START_AT: u64 = 10000;

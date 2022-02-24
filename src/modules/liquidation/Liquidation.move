@@ -1,15 +1,15 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module Liquidation {
     use 0x1::STC;
     use 0x1::Token;
     use 0x1::Math as SMath;
     use 0x1::Errors;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Config;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::PriceOracle::{usdt_price};
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Price;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAI;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Math;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Exponential::{Self, Exp};
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::PriceOracle::{usdt_price};
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Price;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Math;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Exponential::{Self, Exp};
 
     const HF_IS_TOO_LOW: u64 = 666;
 

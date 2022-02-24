@@ -1,9 +1,9 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module Rate {
 
     use 0x1:: Timestamp;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Config;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Exponential;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Exponential;
 
     const PERCENT_PRECISION: u128 = 10000;
 

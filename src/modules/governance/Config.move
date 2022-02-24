@@ -1,9 +1,10 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module Config {
     use 0x1::Config;
     use 0x1::Signer;
     use 0x1::Errors;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Admin;
+    //    use 0x1::Debug;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
 
     struct CapHolder<VaultPoolType: copy + store + drop> has key, store {
         cap: Config::ModifyConfigCapability<VaultPoolConfig<VaultPoolType>>,
@@ -62,6 +63,13 @@ module Config {
     acquires CapHolder {
         let holder = borrow_global_mut<CapHolder<VaultPoolType>>(Admin::admin_address());
         Config::set_with_capability(&mut holder.cap, cofing);
+    }
+
+    public fun update_config_sign<VaultPoolType: copy + store + drop>(account: &signer, config: VaultPoolConfig<VaultPoolType>)
+    acquires CapHolder {
+        Admin::is_admin_address(Signer::address_of(account));
+        let holder = borrow_global_mut<CapHolder<VaultPoolType>>(Admin::admin_address());
+        Config::set_with_capability(&mut holder.cap, config);
     }
 
     public fun get<VaultPoolType: copy + store + drop>(): VaultPoolConfig<VaultPoolType> {

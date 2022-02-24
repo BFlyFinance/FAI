@@ -1,10 +1,10 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module InitializeScript {
 
     use 0x1::Token;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Vault;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAI;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
 
     public(script) fun initialize(sender: signer) {
         Vault::initialize(&sender);

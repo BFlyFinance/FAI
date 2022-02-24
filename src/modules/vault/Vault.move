@@ -1,4 +1,4 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module Vault {
 
     use 0x1::Token ;
@@ -6,12 +6,12 @@ module Vault {
     use 0x1::Signer;
     use 0x1::Account;
     use 0x1::Timestamp;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAI;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Rate;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Admin;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Config;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Treasury;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Liquidation;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Rate;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Treasury;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Liquidation;
 
     const VAULT_EXISTS: u64 = 101;
     const VAULT_NOT_EXISTS: u64 = 102;
