@@ -1,15 +1,15 @@
 //#[test_only]
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestVault {
     use 0x1::Signer;
     use 0x1::STC;
     use 0x1::Timestamp;
 //        use 0x1::Account;
     use 0x1::Debug;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Vault;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::VaultCounter;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::TestHelper;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::VaultCounter;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
 
     #[test(account = @0x1)]
     #[expected_failure(abort_code = 26119)]
@@ -18,7 +18,7 @@ module TestVault {
     }
 
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     fun test_deposit(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -34,7 +34,7 @@ module TestVault {
     }
 
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     fun test_borrow_fai(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -56,7 +56,7 @@ module TestVault {
         Debug::print(&up_ts);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     fun test_borrow_max_fai(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -76,7 +76,7 @@ module TestVault {
         assert(ts==up_ts,12);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     fun test_withdraw_max(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -100,7 +100,7 @@ module TestVault {
         assert(ts==up_ts,12);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     fun test_repay_max(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -123,7 +123,7 @@ module TestVault {
         assert(ts==up_ts,12);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     #[expected_failure(abort_code = 52487)]
     fun test_deposit_max(admin: signer, account: signer) {

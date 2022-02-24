@@ -1,4 +1,4 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestHelper {
     use 0x1::Token;
     use 0x1::Account;
@@ -10,9 +10,9 @@ module TestHelper {
     use 0x1::STCUSDOracle::{Self, STCUSD};
     use 0x1::Timestamp;
     use 0x1::CoreAddresses;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAI;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Admin;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Initialize;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Initialize;
     //    use 0x1::Debug;
 
     const PRECISION: u8 = 9;
@@ -27,7 +27,7 @@ module TestHelper {
         Token::register_token<STC::STC>( & stdlib, 9u8);
         ChainId::initialize(&stdlib, 254);
         Oracle::initialize(&stdlib);
-        let admin_address = @0xb987F1aB0D7879b2aB421b98f96eFb44;
+        let admin_address = @0x4FFCC98F43ce74668264a0CF6Eebe42b;
         let admin_signer = Account::create_genesis_account(admin_address);
         STCUSDOracle::register(&admin_signer);
         init_oracle(&admin_signer);

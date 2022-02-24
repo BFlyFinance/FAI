@@ -1,12 +1,12 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestConfig {
 
     //    use 0x1::Debug;
     //    use 0x1::Signer;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Config;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::TestHelper;
-    #[test(account = @0xb987F1aB0D7879b2aB421b98f96eFb44) ]
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
+    #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b) ]
     fun test_config(account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&account, 0u128, &std_signer);
@@ -29,7 +29,7 @@ module TestConfig {
         Config::publish_new_config_with_capability<STCVaultPoolA::VaultPool>(&account, config);
     }
 
-//    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+//    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
 //    account = @0x0000000000000000000000000a550c18 ) ]
 //    fun test_config_other_account_update_error(admin: signer, account: signer) {
 //        let std_signer = TestHelper::init_stdlib();

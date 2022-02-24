@@ -1,7 +1,7 @@
 //! account: alice
 //! sender: alice
 script {
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::U256;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::U256;
 
     fun test_mult() {
         let a = 340282366920938463463374607431768211455u128;
@@ -15,7 +15,7 @@ script {
 
 //! new-transaction
 script {
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::U256;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::U256;
 
     fun test_mult() {
         let a = 18446744073709551615u64;

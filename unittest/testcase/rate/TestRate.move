@@ -1,10 +1,10 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestRate {
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Rate;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::TestHelper;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA::{VaultPool};
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Rate;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA::{VaultPool};
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44 ) ]
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b ) ]
     fun test_rate(admin: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);

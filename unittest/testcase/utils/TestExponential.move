@@ -1,10 +1,10 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestExponential {
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::TestHelper;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Exponential;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Exponential;
    use 0x1::Debug;
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44 ) ]
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b ) ]
     fun test(admin: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);

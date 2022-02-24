@@ -1,8 +1,8 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestU256 {
 
     //    use 0x1::Debug;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::U256;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::U256;
     #[test]
     fun test_u8_cast_success() {
         assert(U256::as_u8(U256::from_u8(0)) == 0, 0);

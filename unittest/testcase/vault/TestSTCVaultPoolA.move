@@ -1,17 +1,17 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestSTCVaultPoolA {
 
     //    use 0x1::Account;
     //    use 0x1::Signer;
     //    use 0x1::Debug;
     //        use 0x1::STC;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::VaultCounter;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::TestHelper;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::VaultCounter;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
 
 
 
-    #[test(account = @0xb987F1aB0D7879b2aB421b98f96eFb44)]
+    #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b)]
     fun test_create(account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&account, 0u128, &std_signer);
@@ -23,7 +23,7 @@ module TestSTCVaultPoolA {
 //        assert(pool_exists, 101);
     }
 
-    #[test(account = @0xb987F1aB0D7879b2aB421b98f96eFb44)]
+    #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b)]
     #[expected_failure(abort_code = 51718)]
     fun test_alread_create_error(account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -44,7 +44,7 @@ module TestSTCVaultPoolA {
         STCVaultPoolA::create_vault(&account);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44, account = @0x0000000000000000000000000a550c18) ]
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b, account = @0x0000000000000000000000000a550c18) ]
     fun test_create_vault(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);
@@ -57,7 +57,7 @@ module TestSTCVaultPoolA {
         assert(vault_count == 1, 304);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44, account = @0x0000000000000000000000000a550c18) ]
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b, account = @0x0000000000000000000000000a550c18) ]
     #[expected_failure(abort_code = 25857)]
     fun test_create_vault_failure(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -70,7 +70,7 @@ module TestSTCVaultPoolA {
     }
 
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     fun test_deposit(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
@@ -88,7 +88,7 @@ module TestSTCVaultPoolA {
     }
 
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     #[expected_failure(abort_code = 52231)]
     fun test_deposit_insufficient_balance(admin: signer, account: signer) {
@@ -103,7 +103,7 @@ module TestSTCVaultPoolA {
         assert(balance == deposit_amount, 305);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     #[expected_failure(abort_code = 170503)]
     fun test_borrow_mai_more_than_max_supply(admin: signer, account: signer) {
@@ -116,7 +116,7 @@ module TestSTCVaultPoolA {
         STCVaultPoolA::borrow_fai(&account, 10000000000u128);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     #[expected_failure(abort_code = 52487)]
     fun test_borrow_fai_less_than_min_mint(admin: signer, account: signer) {
@@ -129,7 +129,7 @@ module TestSTCVaultPoolA {
         STCVaultPoolA::borrow_fai(&account, 1u128);
     }
 
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44,
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b,
     account = @0x0000000000000000000000000a550c18 ) ]
     fun test_max_borrow_fai(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();

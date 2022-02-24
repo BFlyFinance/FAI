@@ -1,9 +1,9 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestVaultCounter {
 
 //    use 0x1::Debug;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::VaultCounter;
-    #[test(account = @0xb987F1aB0D7879b2aB421b98f96eFb44)]
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::VaultCounter;
+    #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b)]
     fun test_counter(account: signer) {
         let account_exists = VaultCounter::is_counter_exist();
         assert(!account_exists, 101);
@@ -20,7 +20,7 @@ module TestVaultCounter {
         };
     }
 
-    #[test(account = @0xb987F1aB0D7879b2aB421b98f96eFb44) ]
+    #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b) ]
     #[expected_failure(abort_code = 51462)]
     fun test_counter_error(account: signer) {
         let account_exists = VaultCounter::is_counter_exist();

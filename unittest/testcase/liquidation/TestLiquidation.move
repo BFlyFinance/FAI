@@ -1,15 +1,15 @@
-address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
+address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestLiquidation {
 
     use 0x1::STC;
     use 0x1::Debug;
     use 0x1::Token;
 //    use 0x1::Math as SMath;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::Liquidation;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::TestHelper;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::FAI;
-    use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA;
-    #[test(admin = @0xb987F1aB0D7879b2aB421b98f96eFb44 ) ]
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Liquidation;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    #[test(admin = @0x4FFCC98F43ce74668264a0CF6Eebe42b ) ]
     fun test_get_health_factor(admin: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);
