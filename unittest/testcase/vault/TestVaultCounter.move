@@ -1,6 +1,7 @@
 address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
 module TestVaultCounter {
 
+//    use 0x1::Debug;
     use 0xb987F1aB0D7879b2aB421b98f96eFb44::VaultCounter;
     #[test(account = @0xb987F1aB0D7879b2aB421b98f96eFb44)]
     fun test_counter(account: signer) {

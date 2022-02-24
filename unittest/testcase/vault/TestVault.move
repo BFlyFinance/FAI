@@ -4,6 +4,7 @@ module TestVault {
     use 0x1::Signer;
     use 0x1::STC;
     use 0x1::Timestamp;
+//        use 0x1::Account;
     use 0x1::Debug;
     use 0xb987F1aB0D7879b2aB421b98f96eFb44::Vault;
     use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA;
@@ -146,6 +147,9 @@ module TestVault {
     }
 
     fun create_value(account: &signer) {
+//        STCVaultPoolA::initialize(admin, config.max_mai_supply,
+//            config.min_mint_amount, config.stability_fee_ratio,
+//            config.liquidation_ratio, config.liquidation_penalty,config.liquidation_threshold);
         let id = STCVaultPoolA::create_vault(account);
         let start_at = VaultCounter::get_guid_start_at();
         assert(id == start_at + 1, 303);

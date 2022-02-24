@@ -10,6 +10,7 @@ module TestExponential {
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);
         let exp = Exponential::exp(51, 1);
         let exp_u128 = Exponential::truncate(copy exp);
+//        Debug::print(&exp_u128);
         assert(51  == exp_u128, 1);
         let u = Exponential::mantissa(exp);
         assert(51000000000000000000 == u, 2);

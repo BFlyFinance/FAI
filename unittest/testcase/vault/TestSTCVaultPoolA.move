@@ -1,6 +1,10 @@
 address 0xb987F1aB0D7879b2aB421b98f96eFb44 {
 module TestSTCVaultPoolA {
 
+    //    use 0x1::Account;
+    //    use 0x1::Signer;
+    //    use 0x1::Debug;
+    //        use 0x1::STC;
     use 0xb987F1aB0D7879b2aB421b98f96eFb44::STCVaultPoolA;
     use 0xb987F1aB0D7879b2aB421b98f96eFb44::VaultCounter;
     use 0xb987F1aB0D7879b2aB421b98f96eFb44::TestHelper;
@@ -14,6 +18,9 @@ module TestSTCVaultPoolA {
 
         let pool_exists = STCVaultPoolA::is_exists();
         assert(pool_exists, 101);
+//        STCVaultPoolA::initialize(&account, 100000u128, 10u128, 10u128, 10u128, 10u128,100u128);
+//        pool_exists = STCVaultPoolA::is_exists();
+//        assert(pool_exists, 101);
     }
 
     #[test(account = @0xb987F1aB0D7879b2aB421b98f96eFb44)]
@@ -21,6 +28,7 @@ module TestSTCVaultPoolA {
     fun test_alread_create_error(account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&account, 0u128, &std_signer);
+//        STCVaultPoolA::initialize(&account, 100000u128, 10u128, 10u128, 10u128, 10u128,100u128);
         STCVaultPoolA::initialize(&account, 100000u128, 10u128, 10u128, 10u128, 100000u128, 10u128,100u128);
     }
 
@@ -41,6 +49,7 @@ module TestSTCVaultPoolA {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);
 
+//        STCVaultPoolA::initialize(&admin, 100000u128, 10u128, 10u128, 10u128, 10u128,100u128);
         let id = STCVaultPoolA::create_vault(&account);
         let start_at = VaultCounter::get_guid_start_at();
         assert(id == start_at + 1, 303);
@@ -55,6 +64,7 @@ module TestSTCVaultPoolA {
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);
         TestHelper::init_account_with_stc(&account, 0u128, &std_signer);
 
+//        STCVaultPoolA::initialize(&admin, 100000u128, 10u128, 10u128, 10u128, 10u128,100u128);
         STCVaultPoolA::create_vault(&account);
         STCVaultPoolA::create_vault(&account);
     }
@@ -68,6 +78,7 @@ module TestSTCVaultPoolA {
         let init_amount = TestHelper::wrap_to_stc_amount(1000u128);
         TestHelper::init_account_with_stc(&account, init_amount, &std_signer);
 
+//        STCVaultPoolA::initialize(&admin, 100000u128, 10u128, 10u128, 10u128, 10u128,100u128);
         STCVaultPoolA::create_vault(&account);
         let deposit_amount = TestHelper::wrap_to_stc_amount(999u128);
         let balance = STCVaultPoolA::deposit(&account, deposit_amount);
@@ -111,6 +122,7 @@ module TestSTCVaultPoolA {
     fun test_borrow_fai_less_than_min_mint(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);
+//        STCVaultPoolA::initialize(&admin, 100u128, 10u128, 10u128, 10u128, 10u128,100u128);
         let init_amount = TestHelper::wrap_to_stc_amount(999u128);
         TestHelper::init_account_with_stc(&account, init_amount, &std_signer);
         STCVaultPoolA::create_vault(&account);
@@ -122,6 +134,7 @@ module TestSTCVaultPoolA {
     fun test_max_borrow_fai(admin: signer, account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&admin, 0u128, &std_signer);
+        //        STCVaultPoolA::initialize(&admin, 100u128, 10u128, 10u128, 10u128, 10u128,100u128);
         let init_amount = TestHelper::wrap_to_stc_amount(999u128);
         TestHelper::init_account_with_stc(&account, init_amount, &std_signer);
         STCVaultPoolA::create_vault(&account);
