@@ -67,6 +67,7 @@ module STCVaultPoolA {
     }
 
     public fun create_vault(account: &signer): u64  acquires VaultPool {
+        Config::check_global_switch();
         assert(is_exists(), Errors::not_published(POOL_NOT_PUBLISHED));
         let guid = VaultCounter::fresh_guid();
         Vault::create_vault<VaultPool, STC::STC>(account, guid);
@@ -91,6 +92,7 @@ module STCVaultPoolA {
     }
 
     public fun deposit(account: &signer, amount: u128): u128 acquires VaultPool {
+        Config::check_global_switch();
         let account_address = Signer::address_of(account);
         let stc_balance = Account::balance<STC::STC>(copy account_address);
         assert(stc_balance >= amount, Errors::invalid_argument(INSUFFICIENT_BALANCE));
@@ -101,6 +103,7 @@ module STCVaultPoolA {
     }
 
     public fun withdraw(account: &signer, amount: u128): u128 acquires VaultPool {
+        Config::check_global_switch();
         let withdraw_amount = Vault::withdraw<VaultPool, STC::STC>(account, amount);
         let pool = borrow_global_mut<VaultPool>(Admin::admin_address());
         pool.stc_amount = pool.stc_amount - withdraw_amount;
@@ -115,6 +118,7 @@ module STCVaultPoolA {
     public fun borrow_fai(account: &signer, amount: u128)
     acquires VaultPool
     {
+        Config::check_global_switch();
         assert(is_exists(), Errors::not_published(POOL_NOT_PUBLISHED));
         let config: Config::VaultPoolConfig<VaultPool> = Config::get<VaultPool>();
         Config::check_max_fai_supply(&config, current_fai_supply(), amount);
@@ -125,6 +129,7 @@ module STCVaultPoolA {
     }
 
     public fun repay_fai(account: &signer, amount: u128): (u128, u128) acquires VaultPool {
+        Config::check_global_switch();
         assert(is_exists(), Errors::not_published(POOL_NOT_PUBLISHED));
         let (debit, fee) = Vault::repay_fai<VaultPool, STC::STC>(account, amount);
         let vault_pool = borrow_global_mut<VaultPool>(Admin::admin_address());

@@ -7,7 +7,7 @@ module TestHelper {
     use 0x1::ChainId;
     use 0x1::Oracle;
     use 0x1::PriceOracle;
-    use 0x1::STCUSDOracle::{Self, STCUSD};
+    use 0x1::STCUSDOracle::{ STCUSD};
     use 0x1::Timestamp;
     use 0x1::CoreAddresses;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
@@ -22,19 +22,20 @@ module TestHelper {
     }
 
     public fun init_stdlib(): signer {
-        let stdlib = Account::create_genesis_account(@0x1);
-        Timestamp::initialize( & stdlib, 1631244104193u64);
+        let stdlib = Account::create_genesis_account(CoreAddresses::GENESIS_ADDRESS());
+        Timestamp::set_time_has_started(&stdlib);
+        Timestamp::initialize(&stdlib, 1655797763000u64);
         Token::register_token<STC::STC>( & stdlib, 9u8);
         ChainId::initialize(&stdlib, 254);
         Oracle::initialize(&stdlib);
-        let admin_address = @0x4FFCC98F43ce74668264a0CF6Eebe42b;
-        let admin_signer = Account::create_genesis_account(admin_address);
-        STCUSDOracle::register(&admin_signer);
-        init_oracle(&admin_signer);
         let cap = Account::remove_signer_capability( & stdlib);
         let genesis_cap = GenesisSignerCapability { cap };
-        move_to( & stdlib, genesis_cap);
-        stdlib
+        move_to( &stdlib, genesis_cap);
+        let admin_address = @0x4FFCC98F43ce74668264a0CF6Eebe42b;
+        let admin_signer = Account::create_genesis_account(admin_address);
+//        STCUSDOracle::register(&admin_signer);
+//        init_oracle(&admin_signer);
+        admin_signer
     }
 
     public fun update_price(signer: &signer, amount: u128)acquires GenesisSignerCapability {
@@ -44,7 +45,7 @@ module TestHelper {
         PriceOracle::update<STCUSD>(signer, amount);
     }
 
-    fun init_oracle(sender: &signer) {
+    public fun init_oracle(sender: &signer) {
         if (!PriceOracle::is_data_source_initialized<STCUSD>(Signer::address_of(sender))) {
             //STCUSDOracle::register(sender);
             PriceOracle::init_data_source<STCUSD>(sender, 1000000);

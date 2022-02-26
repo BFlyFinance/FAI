@@ -3,30 +3,32 @@
 //! account: alice,20000000000000 0x1::STC::STC
 //! sender: admin
 script {
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
-
-    fun init_fai(sender: signer) {
-        FAI::initialize(&sender);
-    }
-}
-// check: "Keep(EXECUTED)"
-
-//! new-transaction
-//! sender: admin
-script {
     use 0x1::Token;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
 
     fun test_init(sender: signer) {
+        TestHelper::init_oracle(&sender);
         let pool_exists = STCVaultPoolA::is_exists();
         assert(!pool_exists, 101);
-        let max_mint_amount = 2000 * Token::scaling_factor<FAI::FAI>();
+        Vault::initialize(&sender);
+        let max_mint_amount = 200000000000 * Token::scaling_factor<FAI::FAI>();
         let min_mint_amount = 1 * Token::scaling_factor<FAI::FAI>();
+        let stability_fee_ratio = 300u128;
+        let ccr = 30000u128;
+        let max_deposit_per_vault = 1000000000000000u128;
+        let liquidation_penalty = 10u128;
+        let liquidation_threshold = 8000u128;
         STCVaultPoolA::initialize(&sender,
             max_mint_amount,
             min_mint_amount,
-            350, 8000, 10, 8000);
+            stability_fee_ratio,
+            ccr,
+            max_deposit_per_vault,
+            liquidation_penalty,
+            liquidation_threshold);
         pool_exists = STCVaultPoolA::is_exists();
         assert(pool_exists, 101);
     }
@@ -39,10 +41,10 @@ script {
     use 0x1::STC;
     use 0x1::Signer;
 
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
 
-    fun create_vaule(sender: signer) {
+    fun create_vault(sender: signer) {
         assert(
             !Vault::vault_exist<STCVaultPoolA::VaultPool, STC::STC>(Signer::address_of(&sender))
             , 1
@@ -87,14 +89,14 @@ script {
 
     fun borrow_fai_a(sender: signer) {
         assert(
-            STCVaultPoolA::current_mai_supply() == 0, 1
+            STCVaultPoolA::current_fai_supply() == 0, 1
         );
         let amount = (200 * Token::scaling_factor<FAI::FAI>() as u128) ;
-        STCVaultPoolA::borrow_mai(&sender, amount);
+        STCVaultPoolA::borrow_fai(&sender, amount);
         let balance = Account::balance<FAI::FAI>(Signer::address_of(&sender));
         assert(amount == balance, 1);
         assert(
-            STCVaultPoolA::current_mai_supply() == amount, 1
+            STCVaultPoolA::current_fai_supply() == amount, 1
         );
     }
 }
@@ -112,7 +114,7 @@ script {
     fun borrow_fai(sender: signer) {
         let balance_before = Account::balance<FAI::FAI>(Signer::address_of(&sender));
         let amount = (1000 * Token::scaling_factor<FAI::FAI>() as u128) ;
-        STCVaultPoolA::borrow_mai(&sender, amount);
+        STCVaultPoolA::borrow_fai(&sender, amount);
         let balance = Account::balance<FAI::FAI>(Signer::address_of(&sender));
         assert(amount + balance_before == balance, 1);
     }
@@ -130,16 +132,16 @@ script {
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
 
-    fun borrow_mai(sender: signer) {
+    fun borrow_fai(sender: signer) {
         // current mock max is 1280
         let balance_before = Account::balance<FAI::FAI>(Signer::address_of(&sender));
         let amount = (80 * Token::scaling_factor<FAI::FAI>() as u128) + 1 ;
         STCVaultPoolA::borrow_fai(&sender, amount);
         let balance = Account::balance<FAI::FAI>(Signer::address_of(&sender));
-        assert(amount + balance_before == balance, 1);
+        assert((amount + balance_before) == balance, 1);
     }
 }
-// check: " Keep(ABORTED { code: 170503, "
+// check: "Keep(EXECUTED)"
 
 
 //! block-prologue
@@ -151,17 +153,14 @@ script {
 script {
     use 0x1::Signer;
     use 0x1::STC;
-    use 0x1::Token;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
 
-    fun borrow_mai(sender: signer) {
-        let (_id, fai_debit, fee, toke_balance, _ts) = Vault::info<STCVaultPoolA::VaultPool, STC::STC>(Signer::address_of(&sender));
-
-        assert(42000000000 == fee, 1);
-        assert(fai_debit == 1200 * Token::scaling_factor<FAI::FAI>(), 2);
-        assert(toke_balance == 10000 * Token::scaling_factor<STC::STC>(), 3);
+    fun borrow_fai(sender: signer) {
+        let (_, fai_debit, fee, toke_balance, _) = Vault::info<STCVaultPoolA::VaultPool, STC::STC>(Signer::address_of(&sender));
+        assert(38399999999 == fee, 1);
+        assert(1280000000001 == fai_debit, 2);
+        assert(10000000000000 == toke_balance, 3);
     }
 }
 // check: "Keep(EXECUTED)"
@@ -177,17 +176,18 @@ script {
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Treasury;
 
     fun repay_mai(sender: signer) {
         let b_market_cap = Token::market_cap<FAI::FAI>();
         let (_, b_fai_debit, b_fee, _, _) = Vault::info<STCVaultPoolA::VaultPool, STC::STC>(Signer::address_of(&sender));
         let amount = 10 * Token::scaling_factor<FAI::FAI>();
-        STCVaultPoolA::repay_mai(&sender, amount);
+        STCVaultPoolA::repay_fai(&sender, amount);
         let (_, a_fai_debit, a_fee, _, _) = Vault::info<STCVaultPoolA::VaultPool, STC::STC>(Signer::address_of(&sender));
         let a_market_cap = Token::market_cap<FAI::FAI>();
         let after = (b_fai_debit - a_fai_debit) + (b_fee - a_fee);
         assert(amount == after, 1);
-        assert(MAI::treasury_balance() == (b_fee - a_fee), 2);
+        assert(Treasury::treasury_balance<FAI::FAI>() == (b_fee - a_fee), 2);
         assert((b_fai_debit - a_fai_debit) == (b_market_cap - a_market_cap), 3);
     }
 }
@@ -242,11 +242,9 @@ script {
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
 
-    const U128_MAX: u128 = 340282366920938463463374607431768211455u128;
-
     fun repay_mai_all(sender: signer) {
         let balance = Account::balance<FAI::FAI>(Signer::address_of(&sender));
-        let (debit, fee) = STCVaultPoolA::repay_mai(&sender, U128_MAX);
+        let (debit, fee) = STCVaultPoolA::repay_fai(&sender, 0);
         let after_balance = Account::balance<FAI::FAI>(Signer::address_of(&sender));
         let amount = debit + fee;
         let ast = balance - amount;
@@ -302,7 +300,7 @@ script {
         STCVaultPoolA::borrow_fai(&sender, amount);
     }
 }
-// check: " Keep(ABORTED { code: 170503, "
+// check: "Keep(EXECUTED)"
 
 
 
@@ -310,15 +308,15 @@ script {
 //! sender: bob
 script {
     use 0x1::Signer;
-    use 0x1::Token;
+//    use 0x1::Token;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+//    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
     fun borrow_mai(sender: signer) {
         let max = STCVaultPoolA::max_borrow(Signer::address_of(&sender));
-        assert(max ==1279200000000,1);
+        assert(max ==3333333333333,1);
         STCVaultPoolA::deposit(&sender, 1);
         max= STCVaultPoolA::max_borrow(Signer::address_of(&sender));
-        assert(max == (1280 * Token::scaling_factor<FAI::FAI>() as u128),2);
+        assert(max == 3333333333333,2);
     }
 }
 // check: "Keep(EXECUTED)"

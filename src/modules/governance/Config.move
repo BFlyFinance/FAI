@@ -6,6 +6,8 @@ module Config {
     //    use 0x1::Debug;
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
 
+    const DEFAULT_GLOBAL_SWITCH: bool = false;
+
     struct CapHolder<VaultPoolType: copy + store + drop> has key, store {
         cap: Config::ModifyConfigCapability<VaultPoolConfig<VaultPoolType>>,
     }
@@ -18,6 +20,10 @@ module Config {
         max_deposit_per_vault: u128,
         liquidation_penalty: u128,
         liquidation_threshold: u128,
+    }
+
+    struct GlobalSwitch has copy, drop, store {
+        switch: bool
     }
 
     public fun new_config<VaultPoolType: copy + store + drop>
@@ -76,8 +82,30 @@ module Config {
         Config::get_by_address<VaultPoolConfig<VaultPoolType>>(Admin::admin_address())
     }
 
+    public fun set_global_switch(signer: &signer, switch: bool) {
+        Admin::is_admin_address(Signer::address_of(signer));
+        let config = GlobalSwitch {
+            switch
+        };
+        if (Config::config_exist_by_address<GlobalSwitch>(Signer::address_of(signer))) {
+            Config::set<GlobalSwitch>(signer, config);
+        } else {
+            Config::publish_new_config<GlobalSwitch>(signer, config);
+        }
+    }
+
+    public fun get_global_switch(): bool {
+        if (Config::config_exist_by_address<GlobalSwitch>(Admin::admin_address())) {
+            let switch_config = Config::get_by_address<GlobalSwitch>(Admin::admin_address());
+            switch_config.switch
+        } else {
+            DEFAULT_GLOBAL_SWITCH
+        }
+    }
+
     const MIN_MINT_AMOUNT: u64 = 205;
     const MAX_MINT_AMOUNT: u64 = 206;
+    const GLOBAL_SWITCH_OFF: u64 = 207;
 
     public fun check_max_fai_supply<VaultPoolType: copy + store + drop>
     (config: &VaultPoolConfig<VaultPoolType>, current_supply: u128, borrow_amount: u128) {
@@ -87,6 +115,10 @@ module Config {
     public fun check_min_mint_amount<VaultPoolType: copy + store + drop>
     (config: &VaultPoolConfig<VaultPoolType>, borrow_amount: u128) {
         assert(config.min_mint_amount <= borrow_amount || borrow_amount == 0u128, Errors::invalid_argument(MIN_MINT_AMOUNT));
+    }
+
+    public fun check_global_switch() {
+        assert(!get_global_switch(), Errors::invalid_state(GLOBAL_SWITCH_OFF));
     }
 }
 }
