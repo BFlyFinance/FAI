@@ -167,6 +167,40 @@ script {
 
 
 //! new-transaction
+//! sender: admin
+script {
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+
+    fun switch_on(sender: signer) {
+        Config::set_global_switch(&sender, true);
+    }
+}
+
+//! new-transaction
+//! sender: bob
+script {
+
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+
+    fun repay_mai(sender: signer) {
+
+        STCVaultPoolA::repay_fai(&sender, 0u128);
+    }
+}
+// check: " Keep(ABORTED { code: 52993, "
+
+//! new-transaction
+//! sender: admin
+script {
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+
+    fun switch_off(sender: signer) {
+        Config::set_global_switch(&sender, false);
+    }
+}
+
+
+//! new-transaction
 //! sender: bob
 script {
     use 0x1::Token;
