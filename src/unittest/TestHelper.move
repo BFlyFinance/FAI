@@ -10,9 +10,11 @@ module TestHelper {
     use 0x1::STCUSDOracle::{ STCUSD};
     use 0x1::Timestamp;
     use 0x1::CoreAddresses;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Initialize;
+//    use 0x1::Genesis;
+//    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+//    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
+//    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Initialize;
     //    use 0x1::Debug;
 
     const PRECISION: u8 = 9;
@@ -22,20 +24,24 @@ module TestHelper {
     }
 
     public fun init_stdlib(): signer {
+//        Genesis::initialize_for_unit_tests();
         let stdlib = Account::create_genesis_account(CoreAddresses::GENESIS_ADDRESS());
-        Timestamp::set_time_has_started(&stdlib);
         Timestamp::initialize(&stdlib, 1655797763000u64);
         Token::register_token<STC::STC>( & stdlib, 9u8);
         ChainId::initialize(&stdlib, 254);
         Oracle::initialize(&stdlib);
-        let cap = Account::remove_signer_capability( & stdlib);
-        let genesis_cap = GenesisSignerCapability { cap };
+        let cap = Account::remove_signer_capability( &stdlib);
+        let genesis_cap = GenesisSignerCapability { cap: cap };
         move_to( &stdlib, genesis_cap);
+//        GenesisSignerCapability::initialize(&stdlib, cap);
         let admin_address = @0x4FFCC98F43ce74668264a0CF6Eebe42b;
         let admin_signer = Account::create_genesis_account(admin_address);
+        let cap = Account::remove_signer_capability( &admin_signer);
+        let genesis_cap = GenesisSignerCapability { cap: cap };
+        move_to( &admin_signer, genesis_cap);
 //        STCUSDOracle::register(&admin_signer);
 //        init_oracle(&admin_signer);
-        admin_signer
+        stdlib
     }
 
     public fun update_price(signer: &signer, amount: u128)acquires GenesisSignerCapability {
@@ -62,11 +68,11 @@ module TestHelper {
             let stc_balance = Account::balance<STC::STC>(account_address);
             assert(stc_balance == amount, 999);
         };
-        if (account_address == Admin::admin_address()) {
-            if (!Token::is_registered_in<FAI::FAI>(account_address)) {
-                Initialize::initialize(account);
-            };
-        }
+//        if (account_address == Admin::admin_address()) {
+//            if (!Token::is_registered_in<FAI::FAI>(account_address)) {
+//                Initialize::initialize(account);
+//            };
+//        }
     }
 
     public fun deposit_stc_to(account: &signer, amount: u128, stdlib: &signer) {
@@ -105,6 +111,23 @@ module TestHelper {
         let genesis_cap = borrow_global<GenesisSignerCapability>(CoreAddresses::GENESIS_ADDRESS());
         let genesis_account = Account::create_signer_with_cap(&genesis_cap.cap);
         Timestamp::update_global_time(&genesis_account, time);
+    }
+    public fun assert_same_config<T: copy + store + drop>(c: Config::VaultPoolConfig<T>, x: u128) {
+        let config_build = config_builder<T>(x);
+        let rst = c == config_build;
+        assert(rst, 666);
+    }
+
+    public fun config_builder<T: copy + store + drop>(x: u128): Config::VaultPoolConfig<T> {
+        Config::new_config(
+            100000u128 * x,
+            10u128 * x,
+            10u128 * x,
+            10u128 * x,
+            10000 * x,
+            10u128 * x,
+            90000
+        )
     }
 }
 }

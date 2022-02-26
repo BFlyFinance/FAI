@@ -2,6 +2,7 @@ address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestVaultCounter {
 
 //    use 0x1::Debug;
+    #[test_only]
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::VaultCounter;
     #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b)]
     fun test_counter(account: signer) {
