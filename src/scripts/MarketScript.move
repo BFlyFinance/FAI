@@ -37,5 +37,9 @@ module MarketScript {
             ccr, max_deposit_per_vault, liquidation_panalty, liquidation_threshold);
         Config::update_config_sign<STCVaultPoolA::VaultPool>(&sender, config);
     }
+
+	public(script) fun set_global_switch(sender: signer, switch: bool) {
+		Config::set_global_switch(&sender, switch);
+	}
 }
 }

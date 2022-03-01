@@ -24,6 +24,9 @@ module STCOracle {
 
     fun oracle_address<TokenType: store>(): address {
         if (!Admin::is_dev()) {
+			if (Admin::is_barnard()){
+				return @0x07fa08a855753f0ff7292fdcbe871216
+			};
             return @0x82e35b34096f32c42061717c06e44a59
         };
         return Admin::admin_address()

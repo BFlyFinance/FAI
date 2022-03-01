@@ -20,5 +20,10 @@ module Admin {
         id == 252 || id == 254 || id == 255
     }
 
+	public fun is_barnard(): bool {
+		let id = ChainId::get();
+		id == 251
+	}
+
 }
 }
