@@ -1,7 +1,9 @@
 address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestAdmin {
 
+    #[test_only]
     use 0x1::Signer;
+    #[test_only]
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Admin;
 
     #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b) ]

@@ -1,23 +1,24 @@
 address 0x4FFCC98F43ce74668264a0CF6Eebe42b {
 module TestConfig {
-
-    //    use 0x1::Debug;
-    //    use 0x1::Signer;
+    #[test_only]
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+    #[test_only]
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    #[test_only]
     use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
+
     #[test(account = @0x4FFCC98F43ce74668264a0CF6Eebe42b) ]
     fun test_config(account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&account, 0u128, &std_signer);
-        let config = config_builder(1u128);
+        let config = TestHelper::config_builder(1u128);
         Config::publish_new_config_with_capability<STCVaultPoolA::VaultPool>(&account, config);
         let get_config = Config::get<STCVaultPoolA::VaultPool>();
-        assert_same_config(get_config, 1);
-        let config_2 = config_builder(2u128);
+        TestHelper::assert_same_config(get_config, 1);
+        let config_2 = TestHelper::config_builder(2u128);
         Config::update_config<STCVaultPoolA::VaultPool>(config_2);
         let get_config = Config::get<STCVaultPoolA::VaultPool>();
-        assert_same_config(get_config, 2);
+        TestHelper::assert_same_config(get_config, 2);
     }
 
     #[test(account = @0xf8af03dd08de49d81e4efd9e24c038cc) ]
@@ -25,7 +26,7 @@ module TestConfig {
     fun test_config_not_admin(account: signer) {
         let std_signer = TestHelper::init_stdlib();
         TestHelper::init_account_with_stc(&account, 0u128, &std_signer);
-        let config = config_builder(1u128);
+        let config = TestHelper::config_builder(1u128);
         Config::publish_new_config_with_capability<STCVaultPoolA::VaultPool>(&account, config);
     }
 
@@ -44,22 +45,5 @@ module TestConfig {
 //        assert_same_config(get_config, 2);
 //    }
 
-    fun assert_same_config<T: copy + store + drop>(c: Config::VaultPoolConfig<T>, x: u128) {
-        let config_build = config_builder<T>(x);
-        let rst = c == config_build;
-        assert(rst, 666);
-    }
-
-    fun config_builder<T: copy + store + drop>(x: u128): Config::VaultPoolConfig<T> {
-        Config::new_config(
-            100000u128 * x,
-            10u128 * x,
-            10u128 * x,
-            10u128 * x,
-            10000 * x,
-            10u128 * x,
-            90000
-        )
-    }
 }
 }

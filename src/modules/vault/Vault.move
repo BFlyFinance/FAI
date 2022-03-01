@@ -44,6 +44,7 @@ module Vault {
     }
 
     public fun create_vault<VaultPoolType: store, TokenType: store>(account: &signer, guid: u64) {
+        Config::check_global_switch();
         assert(
             !vault_exist<VaultPoolType, TokenType>(Signer::address_of(account)),
             Errors::invalid_state(VAULT_EXISTS)
@@ -65,6 +66,7 @@ module Vault {
 
     public fun deposit<VaultPoolType: copy+store+drop, TokenType: store>(account: &signer, amount: u128): u128
     acquires Vault {
+        Config::check_global_switch();
         assert(
             vault_exist<VaultPoolType, TokenType>(Signer::address_of(account)),
             Errors::invalid_argument(VAULT_NOT_EXISTS)
@@ -110,6 +112,7 @@ module Vault {
     }
 
     public fun withdraw<VaultPoolType: store + drop + copy, TokenType: store>(account: &signer, amount: u128): u128 acquires Vault {
+        Config::check_global_switch();
         assert(
             vault_exist<VaultPoolType, TokenType>(Signer::address_of(account)),
             Errors::invalid_argument(VAULT_NOT_EXISTS)
@@ -132,6 +135,7 @@ module Vault {
     public fun borrow_fai<VaultPoolType: store + drop + copy, TokenType: store>
     (account: &signer, amount: u128): u128
     acquires Vault, SharedMintCapability {
+        Config::check_global_switch();
         assert(
             vault_exist<VaultPoolType, TokenType>(Signer::address_of(account)),
             Errors::invalid_argument(VAULT_NOT_EXISTS)
@@ -160,6 +164,7 @@ module Vault {
 
     public fun repay_fai<VaultPoolType: store + drop + copy, TokenType: store>
     (account: &signer, amount: u128): (u128, u128) acquires Vault, SharedBurnCapability {
+        Config::check_global_switch();
         assert(
             vault_exist<VaultPoolType, TokenType>(Signer::address_of(account)),
             Errors::invalid_argument(VAULT_NOT_EXISTS)
