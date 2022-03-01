@@ -1,13 +1,13 @@
-//! account: admin ,0x4FFCC98F43ce74668264a0CF6Eebe42b, 20000000000 0x1::STC::STC
-//! account: bob,20000000000000 0x1::STC::STC
-//! account: alice,20000000000000 0x1::STC::STC
+//! account: admin ,FaiAdmin, 20000000000 StarcoinFramework::STC::STC
+//! account: bob,20000000000000 StarcoinFramework::STC::STC
+//! account: alice,20000000000000 StarcoinFramework::STC::STC
 //! sender: admin
 script {
-    use 0x1::Token;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::TestHelper;
+    use StarcoinFramework::Token;
+    use FaiAdmin::FAI;
+    use FaiAdmin::Vault;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::TestHelper;
 
     fun test_init(sender: signer) {
         TestHelper::init_oracle(&sender);
@@ -38,11 +38,11 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::STC;
-    use 0x1::Signer;
+    use StarcoinFramework::STC;
+    use StarcoinFramework::Signer;
 
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use FaiAdmin::Vault;
+    use FaiAdmin::STCVaultPoolA;
 
     fun create_vault(sender: signer) {
         assert(
@@ -61,11 +61,11 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::STC;
-    use 0x1::Account;
-    use 0x1::Token;
-    use 0x1::Signer;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use StarcoinFramework::STC;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Signer;
+    use FaiAdmin::STCVaultPoolA;
 
     fun deposit(sender: signer) {
         let balance = Account::balance<STC::STC>(Signer::address_of(&sender));
@@ -80,11 +80,11 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Account;
-    use 0x1::Token;
-    use 0x1::Signer;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Signer;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::FAI;
 
 
     fun borrow_fai_a(sender: signer) {
@@ -105,11 +105,11 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Account;
-    use 0x1::Token;
-    use 0x1::Signer;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Signer;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::FAI;
 
     fun borrow_fai(sender: signer) {
         let balance_before = Account::balance<FAI::FAI>(Signer::address_of(&sender));
@@ -126,11 +126,11 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Account;
-    use 0x1::Token;
-    use 0x1::Signer;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Signer;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::FAI;
 
     fun borrow_fai(sender: signer) {
         // current mock max is 1280
@@ -151,10 +151,10 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Signer;
-    use 0x1::STC;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::STC;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::Vault;
 
     fun borrow_fai(sender: signer) {
         let (_, fai_debit, fee, toke_balance, _) = Vault::info<STCVaultPoolA::VaultPool, STC::STC>(Signer::address_of(&sender));
@@ -169,7 +169,7 @@ script {
 //! new-transaction
 //! sender: admin
 script {
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+    use FaiAdmin::Config;
 
     fun switch_on(sender: signer) {
         Config::set_global_switch(&sender, true);
@@ -180,7 +180,7 @@ script {
 //! sender: bob
 script {
 
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use FaiAdmin::STCVaultPoolA;
 
     fun repay_mai(sender: signer) {
 
@@ -192,7 +192,7 @@ script {
 //! new-transaction
 //! sender: admin
 script {
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Config;
+    use FaiAdmin::Config;
 
     fun switch_off(sender: signer) {
         Config::set_global_switch(&sender, false);
@@ -203,14 +203,14 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Token;
-    use 0x1::Signer;
+    use StarcoinFramework::Token;
+    use StarcoinFramework::Signer;
 
-    use 0x1::STC;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Vault;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::Treasury;
+    use StarcoinFramework::STC;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::FAI;
+    use FaiAdmin::Vault;
+    use FaiAdmin::Treasury;
 
     fun repay_mai(sender: signer) {
         let b_market_cap = Token::market_cap<FAI::FAI>();
@@ -230,7 +230,7 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use FaiAdmin::STCVaultPoolA;
 
     const U128_MAX: u128 = 340282366920938463463374607431768211455u128;
 
@@ -244,12 +244,12 @@ script {
 //! sender: alice
 address bob = {{bob}};
 script {
-    use 0x1::STC;
-    use 0x1::Signer;
-    use 0x1::Token;
-    use 0x1:: Account;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use StarcoinFramework::STC;
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::Token;
+    use StarcoinFramework:: Account;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::FAI;
 
     fun transfer_to_bob(sender: signer) {
         STCVaultPoolA::create_vault(&sender);
@@ -271,10 +271,10 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Account;
-    use 0x1::Signer;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::Signer;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::FAI;
 
     fun repay_mai_all(sender: signer) {
         let balance = Account::balance<FAI::FAI>(Signer::address_of(&sender));
@@ -294,7 +294,7 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use FaiAdmin::STCVaultPoolA;
     fun repay_fai_all(sender: signer) {
          STCVaultPoolA::repay_fai(&sender, 1);
     }
@@ -306,10 +306,10 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Account;
-    use 0x1::Signer;
-    use 0x1::STC;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
+    use StarcoinFramework::Account;
+    use StarcoinFramework::Signer;
+    use StarcoinFramework::STC;
+    use FaiAdmin::STCVaultPoolA;
     fun withdraw(sender: signer) {
         let balance = Account::balance<STC::STC>(Signer::address_of(&sender));
         STCVaultPoolA::withdraw(&sender, 1);
@@ -324,9 +324,9 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Token;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use StarcoinFramework::Token;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::FAI;
 
     fun borrow_mai(sender: signer) {
         // current mock max is 1280
@@ -341,10 +341,10 @@ script {
 //! new-transaction
 //! sender: bob
 script {
-    use 0x1::Signer;
-//    use 0x1::Token;
-    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::STCVaultPoolA;
-//    use 0x4FFCC98F43ce74668264a0CF6Eebe42b::FAI;
+    use StarcoinFramework::Signer;
+//    use StarcoinFramework::Token;
+    use FaiAdmin::STCVaultPoolA;
+//    use FaiAdmin::FAI;
     fun borrow_mai(sender: signer) {
         let max = STCVaultPoolA::max_borrow(Signer::address_of(&sender));
         assert(max ==3333333333333,1);

@@ -1,0 +1,10 @@
+[package]
+name = "FAI"
+version = "0.9.0"
+
+[addresses]
+StarcoinFramework = "0x1"
+FaiAdmin = "0xfe125d419811297dfab03c61efec0bc9"
+
+[dependencies]
+StarcoinFramework = {git = "https://github.com/starcoinorg/starcoin-framework.git", rev="01c84198819310620f2417413c3c800df8292ae5"}
