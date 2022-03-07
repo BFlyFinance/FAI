@@ -1,4 +1,5 @@
 address FaiAdmin {
+#[test_only]
 module TestU256 {
 
     //    use StarcoinFramework::Debug;

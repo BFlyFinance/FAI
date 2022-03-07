@@ -1,4 +1,5 @@
 address FaiAdmin {
+#[test_only]
 module TestVaultCounter {
 
 //    use StarcoinFramework::Debug;

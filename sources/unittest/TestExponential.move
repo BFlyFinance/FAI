@@ -1,4 +1,5 @@
 address FaiAdmin {
+#[test_only]
 module TestExponential {
     #[test_only]
     use FaiAdmin::TestHelper;

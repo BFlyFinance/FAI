@@ -1,4 +1,5 @@
 address FaiAdmin {
+#[test_only]
 module TestHelper {
     use StarcoinFramework::Token;
     use StarcoinFramework::Account;

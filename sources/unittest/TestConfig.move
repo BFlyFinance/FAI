@@ -1,4 +1,5 @@
 address FaiAdmin {
+#[test_only]
 module TestConfig {
     #[test_only]
     use FaiAdmin::Config;
