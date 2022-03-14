@@ -1,5 +1,5 @@
 address FaiAdmin {
-#[test_only]
+//#[test_only]
 module TestHelper {
     use StarcoinFramework::Token;
     use StarcoinFramework::Account;
@@ -45,10 +45,7 @@ module TestHelper {
         stdlib
     }
 
-    public fun update_price(signer: &signer, amount: u128)acquires GenesisSignerCapability {
-        let now = Timestamp::now_milliseconds();
-
-        set_timestamp(now + 1);
+    public fun update_price(signer: &signer, amount: u128) {
         PriceOracle::update<STCUSD>(signer, amount);
     }
 

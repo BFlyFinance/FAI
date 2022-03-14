@@ -53,7 +53,7 @@ module Config {
             config.ccr,
             config.max_deposit_per_vault,
             config.liquidation_penalty,
-            config. liquidation_threshold,
+            config.liquidation_threshold,
         )
     }
 

@@ -9,6 +9,8 @@ module STCVaultPoolA {
     use FaiAdmin::VaultCounter;
     use FaiAdmin::Config;
 
+    friend FaiAdmin::Liquidation;
+
     const POOL_ALREADY_PUBLISHED: u64 = 202;
     const POOL_NOT_PUBLISHED: u64 = 203;
     const INSUFFICIENT_BALANCE: u64 = 204;
@@ -66,6 +68,17 @@ module STCVaultPoolA {
         Config::publish_new_config_with_capability<VaultPool>(account, config);
     }
 
+    public(friend) fun crack
+    (account: &signer, vault_address: address, liquidate_collateral_amount:u128, cover_amount: u128)
+    acquires VaultPool {
+        let (debit, _pay_fee) = Vault::rearrange<VaultPool, STC::STC>
+                               (account, vault_address, liquidate_collateral_amount, cover_amount);
+        let pool = borrow_global_mut<VaultPool>(Admin::admin_address());
+        pool.current_fai_supply = pool.current_fai_supply - debit;
+        pool.stc_amount = pool.stc_amount - liquidate_collateral_amount;
+        // TODO add event
+    }
+
     public fun create_vault(account: &signer): u64  acquires VaultPool {
         Config::check_global_switch();
         assert!(is_exists(), Errors::not_published(POOL_NOT_PUBLISHED));
@@ -99,6 +112,7 @@ module STCVaultPoolA {
         let balance = Vault::deposit<VaultPool, STC::STC>(account, amount);
         let pool = borrow_global_mut<VaultPool>(Admin::admin_address());
         pool.stc_amount = pool.stc_amount + balance;
+        // TODO add event
         balance
     }
 
@@ -107,6 +121,7 @@ module STCVaultPoolA {
         let withdraw_amount = Vault::withdraw<VaultPool, STC::STC>(account, amount);
         let pool = borrow_global_mut<VaultPool>(Admin::admin_address());
         pool.stc_amount = pool.stc_amount - withdraw_amount;
+        // TODO add event
         withdraw_amount
 
     }
@@ -126,6 +141,7 @@ module STCVaultPoolA {
         amount = Vault::borrow_fai<VaultPool, STC::STC>(account, amount);
         let vault_pool = borrow_global_mut<VaultPool>(Admin::admin_address());
         vault_pool.current_fai_supply = vault_pool.current_fai_supply + amount;
+        // TODO add event
     }
 
     public fun repay_fai(account: &signer, amount: u128): (u128, u128) acquires VaultPool {
@@ -134,6 +150,7 @@ module STCVaultPoolA {
         let (debit, fee) = Vault::repay_fai<VaultPool, STC::STC>(account, amount);
         let vault_pool = borrow_global_mut<VaultPool>(Admin::admin_address());
         vault_pool.current_fai_supply = vault_pool.current_fai_supply - debit;
+        // TODO add event
         (debit, fee)
     }
 

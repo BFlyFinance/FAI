@@ -2,89 +2,107 @@ address FaiAdmin {
 module Liquidation {
     use StarcoinFramework::STC;
     use StarcoinFramework::Token;
-    use StarcoinFramework::Math as SMath;
+    use StarcoinFramework::Signer;
     use StarcoinFramework::Errors;
-    use FaiAdmin::Config;
-    use FaiAdmin::PriceOracle::{usdt_price};
-    use FaiAdmin::Price;
+    use StarcoinFramework::Account;
     use FaiAdmin::FAI;
     use FaiAdmin::Math;
-    use FaiAdmin::Exponential::{Self, Exp};
+    use FaiAdmin::Price;
+    use FaiAdmin::Vault;
+    use FaiAdmin::Config;
+    use FaiAdmin::STCVaultPoolA;
+    use FaiAdmin::Exponential;
+    use FaiAdmin::PriceOracle::{usdt_price};
 
-    const HF_IS_TOO_LOW: u64 = 666;
+    const VAULT_IS_HEALTHY: u64 = 16;
+    const AMOUNT_IS_INVALID: u64 = 17;
+    const INSUFFICIENT_BALANCE: u64 = 18;
+    const EDEPRECATED_FUNCTION: u64 = 19;
 
     const PERCENT_PRECISION: u8 = 4;
     const E18: u128 = 1000000000000000000;
 
+    public fun clip<VaultPoolType: copy + store + drop, TokenType: copy + store + drop>(sender: &signer, vault_address: address, cover_amount: u128) {
+       // if cover_amount is 0u128, liquidate 50%
+        // if cover_amount > 0, check sender has enough FAI to cover debt
+        // select operator according to VaultPoolType
+        // calc how much to
+        Config::check_global_switch();
+        let health_factor_of_vault = health_factor_by_address<VaultPoolType, TokenType>(copy vault_address);
+        assert!(health_factor_of_vault <= Math::pow_10(18), VAULT_IS_HEALTHY);
+        StarcoinFramework::Debug::print(&111111);
+        let (
+            _,
+            debt_fai_amount,
+            stability_fee,
+            _,
+            _
+        ) = Vault::info<VaultPoolType, TokenType>(vault_address);
+        let total_debt = debt_fai_amount + stability_fee;
+        let debt_cover_amount = if (cover_amount == 0u128) {
+            (debt_fai_amount + stability_fee) / 2
+        } else {
+            let half_debt = total_debt / 2u128;
+            assert!(half_debt >= cover_amount, AMOUNT_IS_INVALID);
+            cover_amount
+        };
+        let fai_balance = Account::balance<FAI::FAI>(Signer::address_of(sender));
+        assert!(fai_balance >= debt_cover_amount, INSUFFICIENT_BALANCE);
+        let config = Config::get<VaultPoolType>();
+        let (_, _, _, _, _, liq_penalty, _) = Config::unpack<VaultPoolType>(config);
+        let price_number = usdt_price<STC::STC>();
+        let (price, price_scaling) = Price::unpack(price_number);
+        let price_discount = price * (100 - liq_penalty);
+        let liquidate_collateral_amount_exp = Exponential::exp(debt_cover_amount, price_discount);
+        let exp_scaling = Math::pow_10(18);
+        let scaling = exp_scaling / (price_scaling * 100);
+        let liquidate_collateral_amount = Exponential::mantissa(liquidate_collateral_amount_exp) / scaling;
+        if (Token::is_same_token<TokenType, STC::STC>()) {
+            STCVaultPoolA::crack(
+                sender,
+                vault_address,
+                liquidate_collateral_amount,
+                debt_cover_amount
+            );
+        }
+    }
+
+    public fun health_factor_by_address<VaultPoolType: copy + store + drop, TokenType: store>
+    (account: address): u128{
+        let (
+            _,
+            debt_fai_amount,
+            stability_fee,
+            collateral_amount,
+            _
+        ) = Vault::info<VaultPoolType, TokenType>(account);
+        let price_number = usdt_price<STC::STC>();
+        let (price, price_scaling) = Price::unpack(price_number);
+        let price = Exponential::exp(price, price_scaling);
+        // may have probs if price_scaling is e18
+        let collateral_value = Exponential::mul_scalar_exp(price, collateral_amount);
+        let config = Config::get<VaultPoolType>();
+        let (_, _, _, _, _, _, liq_threshold) = Config::unpack<VaultPoolType>(config);
+        let liq_threshold_exp = Exponential::exp(liq_threshold, 100000u128);
+        let total_debt = debt_fai_amount + stability_fee;
+        let debt_fai_liq_threshold_exp = Exponential::mul_scalar_exp(liq_threshold_exp, total_debt);
+        let health_factor = Exponential::exp(Exponential::truncate(collateral_value), Exponential::truncate(debt_fai_liq_threshold_exp));
+        Exponential::mantissa(health_factor)
+    }
 
     public fun check_health_factor<VaultPoolType: copy + store + drop, TokenType: store>
-    (amount: u128, unpay_stability_fee: u128, debt_mai_amount: u128, collateral: u128) {
-        let base_line = cal_max_borrow<VaultPoolType, TokenType>(unpay_stability_fee, collateral);
-        assert!(amount + debt_mai_amount <= base_line + 2, Errors::invalid_argument(HF_IS_TOO_LOW));
+    (_amount: u128, _unpay_stability_fee: u128, _debt_mai_amount: u128, _collateral: u128) {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
     public fun cal_max_borrow<VaultPoolType: copy + store + drop, TokenType: store>
-    (unpay_stability_fee: u128, collateral: u128): u128 {
-        let config = Config::get<VaultPoolType>();
-        let (_, _, _, ccr, _, _, _) = Config::unpack<VaultPoolType>(config);
-        let max_borrow = max_borrow<TokenType>(collateral, Math::pow_10(PERCENT_PRECISION));
-        let base_line = SMath::mul_div(max_borrow, Math::pow_10(PERCENT_PRECISION), ccr) ;
-        base_line - unpay_stability_fee
+    (_unpay_stability_fee: u128, _collateral: u128): u128 {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
     public fun cal_max_withdraw<VaultPoolType: copy + store + drop>
-    (debt_fai: u128, unpay_stability_fee: u128, collateral: u128): u128 {
-        let config = Config::get<VaultPoolType>();
-        let (_, _, _, ccr, _, _, _) = Config::unpack<VaultPoolType>(config);
-        let total_fai = debt_fai + unpay_stability_fee;
-        let collateral_needed = min_collateral(total_fai, ccr);
-        collateral - collateral_needed
-    }
-
-    fun min_collateral(amount: u128, ccr: u128): u128 {
-        let token_usd = token_value_of_usd<FAI::FAI>(amount);
-        let equal_value_stc_amount = to_token_amount<STC::STC>(token_usd);
-        SMath::mul_div(equal_value_stc_amount, ccr, Math::pow_10(PERCENT_PRECISION))
-    }
-
-    fun max_borrow<TokenType: store>(collateral: u128, lt: u128): u128 {
-        let token_usd = token_value_of_usd<STC::STC>(collateral);
-        let equal_value_mai_amount = to_token_amount<FAI::FAI>(token_usd);
-        SMath::mul_div(equal_value_mai_amount, lt, Math::pow_10(PERCENT_PRECISION))
-    }
-
-    fun to_token_amount<TokenType: store>(amount: Exp): u128 {
-        let token_scaling = Token::scaling_factor<TokenType>();
-        let exp_scale: u128 = Exponential::exp_scale();
-        let price_number = usdt_price<TokenType>();
-        let (price, price_scaling) = Price::unpack(price_number);
-        let price = Exponential::exp_direct(price);
-        // may have probs if price_scaling is e18
-        let amount_price_scaling = Exponential::mul_scalar_exp(amount, price_scaling);
-        let token_amount_exp = Exponential::div_scalar_exp(amount_price_scaling, Exponential::mantissa(price));
-        let token_amount = Exponential::mantissa(token_amount_exp) / (exp_scale / token_scaling);
-        token_amount
-    }
-
-    fun token_value_of_usd<TokenType: store>(amount: u128): Exp {
-        // return exp(amount*price, token_scaling*price_scaling)
-        let exp_scale: u128 = Exponential::exp_scale();
-        let token_scaling = Token::scaling_factor<TokenType>();
-        let price_number = usdt_price<TokenType>();
-        let (price, price_scaling) = Price::unpack(price_number);
-        let price = Exponential::exp_direct(price);
-        let amount_exp = Exponential::exp_direct(amount);
-        let token_usdt_value_exp = Exponential::mul_scalar_exp(amount_exp, Exponential::mantissa(price));
-        if (price_scaling == 0) {
-            price_scaling = 1;
-        };
-        let token_usdt_value_exp_scaling = token_scaling * price_scaling;
-        if (token_usdt_value_exp_scaling >= exp_scale) {
-            Exponential::div_scalar_exp(token_usdt_value_exp, token_usdt_value_exp_scaling / exp_scale)
-        } else {
-            let scaling = exp_scale / token_usdt_value_exp_scaling;
-            Exponential::mul_scalar_exp(token_usdt_value_exp, scaling)
-        }
+    (_debt_fai: u128, _unpay_stability_fee: u128, _collateral: u128): u128 {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 }
 }

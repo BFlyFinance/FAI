@@ -11,7 +11,9 @@ module Vault {
     use FaiAdmin::Admin;
     use FaiAdmin::Config;
     use FaiAdmin::Treasury;
-    use FaiAdmin::Liquidation;
+    use FaiAdmin::LiquidationHelper;
+
+    friend FaiAdmin::STCVaultPoolA;
 
     const VAULT_EXISTS: u64 = 101;
     const VAULT_NOT_EXISTS: u64 = 102;
@@ -61,6 +63,27 @@ module Vault {
 
     public fun vault_exist<VaultPoolType: store, TokenType: store>(address: address): bool {
         exists<Vault<VaultPoolType, TokenType>>(address)
+    }
+
+    public(friend) fun rearrange<VaultPoolType: store+copy+drop, TokenType: store>
+    (sender: &signer, vault_address: address, liquidate_collateral_amount: u128, cover_amount: u128)
+    :(u128, u128) acquires Vault, SharedBurnCapability {
+        // repay fai through sender's account
+        // return liq asset
+        Config::check_global_switch();
+        assert!(
+            vault_exist<VaultPoolType, TokenType>(copy vault_address),
+            Errors::invalid_argument(VAULT_NOT_EXISTS)
+        );
+        let vault = borrow_global_mut<Vault<VaultPoolType, TokenType>>(copy vault_address);
+        let stability_fee = Rate::stability_fee<VaultPoolType>(vault.debt_fai_amount, vault.unpay_stability_fee, vault.last_update_at);
+
+        vault.unpay_stability_fee = vault.unpay_stability_fee + stability_fee;
+        vault.last_update_at = Timestamp::now_seconds();
+        let collateral = Token::withdraw<TokenType>(&mut vault.token, liquidate_collateral_amount);
+        Account::deposit_to_self<TokenType>(sender, collateral);
+        let fai_token = Account::withdraw<FAI::FAI>(sender, cover_amount);
+        repay<VaultPoolType, TokenType>(vault, fai_token, cover_amount)
     }
 
 
@@ -122,10 +145,10 @@ module Vault {
         vault.unpay_stability_fee = vault.unpay_stability_fee + stability_fee;
         vault.last_update_at = Timestamp::now_seconds();
         if (amount == 0u128) {
-            amount = Liquidation::cal_max_withdraw<VaultPoolType>(vault.debt_fai_amount, vault.unpay_stability_fee, balance_for(vault));
+            amount = LiquidationHelper::cal_max_withdraw<VaultPoolType>(vault.debt_fai_amount, vault.unpay_stability_fee, balance_for(vault));
         };
         let balance = balance_for(vault);
-        Liquidation::check_health_factor<VaultPoolType, TokenType>(0u128, vault.unpay_stability_fee, vault.debt_fai_amount, balance - amount);
+        LiquidationHelper::check_health_factor<VaultPoolType, TokenType>(0u128, vault.unpay_stability_fee, vault.debt_fai_amount, balance - amount);
         let tokens = Token::withdraw<TokenType>(&mut vault.token, amount);
         Account::deposit_to_self<TokenType>(account, tokens);
         amount
@@ -145,10 +168,10 @@ module Vault {
         vault.last_update_at = Timestamp::now_seconds();
         vault.unpay_stability_fee = vault.unpay_stability_fee + stability_fee;
         if (amount == 0u128) {
-            let max_amount = Liquidation::cal_max_borrow<VaultPoolType, TokenType>(vault.unpay_stability_fee, balance_for(vault));
+            let max_amount = LiquidationHelper::cal_max_borrow<VaultPoolType, TokenType>(vault.unpay_stability_fee, balance_for(vault));
             amount = max_amount - vault.debt_fai_amount;
         };
-        Liquidation::check_health_factor<VaultPoolType, TokenType>(amount, vault.unpay_stability_fee, vault.debt_fai_amount, balance_for(vault));
+        LiquidationHelper::check_health_factor<VaultPoolType, TokenType>(amount, vault.unpay_stability_fee, vault.debt_fai_amount, balance_for(vault));
         let cap = borrow_global<SharedMintCapability>(Admin::admin_address());
         let tokens = FAI::mint_with_cap(amount, &cap.cap);
         let is_accept_token = Account::is_accepts_token<FAI::FAI>(Signer::address_of(account));
@@ -189,6 +212,14 @@ module Vault {
         );
         let tokens = Account::withdraw<FAI::FAI>(account, amount);
 
+        let (pay_debit, pay_fee) = repay<VaultPoolType, TokenType>(vault, tokens, amount);
+        (pay_debit, pay_fee)
+    }
+
+    fun repay<VaultPoolType: store + copy + drop, TokenType: store>
+    (vault: &mut Vault<VaultPoolType, TokenType>, token: Token::Token<FAI::FAI>, amount: u128): (u128, u128)
+    acquires SharedBurnCapability {
+
         let before_debit = vault.debt_fai_amount;
         let before_fee = vault.unpay_stability_fee;
         if (amount > vault.unpay_stability_fee) {
@@ -203,17 +234,19 @@ module Vault {
         let pay_fee = before_fee - after_fee;
         assert!(pay_fee + pay_debit == amount, 501);
 
-        let (debit, fee) = Token::split<FAI::FAI>(tokens, pay_fee);
+        let (debit, fee) = Token::split<FAI::FAI>(token, pay_fee);
         let cap = borrow_global<SharedBurnCapability>(Admin::admin_address());
         FAI::burn_with_cap(debit, &cap.cap);
         Treasury::deposit(fee);
         (pay_debit, pay_fee)
+
     }
+
 
     public fun max_borrow<VaultPoolType: store + drop + copy, TokenType: store>(address: address): u128
     acquires Vault {
         let vault = borrow_global<Vault<VaultPoolType, TokenType>>(address);
-        Liquidation::cal_max_borrow<VaultPoolType, TokenType>(vault.unpay_stability_fee, balance_for(vault))
+        LiquidationHelper::cal_max_borrow<VaultPoolType, TokenType>(vault.unpay_stability_fee, balance_for(vault))
     }
 }
 }
