@@ -38,6 +38,7 @@ script {
             max_deposit_per_vault,
             liquidation_penalty,
             liquidation_threshold);
+        STCVaultPoolA::initialize_event(&sender);
         pool_exists = STCVaultPoolA::is_exists();
         assert!(pool_exists, 101);
     }
