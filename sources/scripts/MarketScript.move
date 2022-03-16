@@ -24,6 +24,10 @@ module MarketScript {
         let (_, _) = STCVaultPoolA::repay_fai(&sender, amount);
     }
 
+    public(script) fun init_event(sender: signer) {
+        let (_, _) = STCVaultPoolA::initialize_event(&sender);
+    }
+
     public(script) fun update_config
     (sender: signer,
      max_fai_supply: u128,
