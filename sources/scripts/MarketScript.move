@@ -1,7 +1,9 @@
 address FaiAdmin {
 module MarketScript {
 
+    use StarcoinFramework::STC;
     use FaiAdmin::Config;
+    use FaiAdmin::Liquidation;
     use FaiAdmin::STCVaultPoolA;
 
     public(script) fun create_vault(sender: signer) {
@@ -26,6 +28,10 @@ module MarketScript {
 
     public(script) fun init_event(sender: signer) {
         STCVaultPoolA::initialize_event(&sender);
+    }
+
+    public(script) fun liquidation(sender: signer, vault_address: address, amount: u128) {
+        Liquidation::clip<STCVaultPoolA::VaultPool, STC::STC>(&sender, vault_address, amount);
     }
 
     public(script) fun update_config
