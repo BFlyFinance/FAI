@@ -25,7 +25,7 @@ module MarketScript {
     }
 
     public(script) fun init_event(sender: signer) {
-        let (_, _) = STCVaultPoolA::initialize_event(&sender);
+        STCVaultPoolA::initialize_event(&sender);
     }
 
     public(script) fun update_config
