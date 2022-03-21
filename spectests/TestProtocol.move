@@ -81,6 +81,8 @@ script {
         STCVaultPoolA::deposit(&sender, amount);
         let after_balance = Account::balance<STC::STC>(Signer::address_of(&sender));
         assert!(after_balance + amount == balance, 1);
+        let stc_locked_amount = STCVaultPoolA::current_stc_locked();
+        assert!(stc_locked_amount == amount, 2);
     }
 }
 // check: "Keep(EXECUTED)"
@@ -304,11 +306,14 @@ script {
     use StarcoinFramework::STC;
     use FaiAdmin::STCVaultPoolA;
     fun withdraw(sender: signer) {
+        let before_withdraw_stc_locked_amount = STCVaultPoolA::current_stc_locked();
         let balance = Account::balance<STC::STC>(Signer::address_of(&sender));
         STCVaultPoolA::withdraw(&sender, 1);
+        let after_withdraw_stc_locked_amount = STCVaultPoolA::current_stc_locked();
         let balance2 = Account::balance<STC::STC>(Signer::address_of(&sender));
         let n = (balance + 1);
-        assert!( n == balance2,1);
+        assert!( n == balance2, 1);
+        assert!( before_withdraw_stc_locked_amount - 1 == after_withdraw_stc_locked_amount, 2);
     }
 }
 // check: "Keep(EXECUTED)"

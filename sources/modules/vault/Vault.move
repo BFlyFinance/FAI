@@ -103,7 +103,7 @@ module Vault {
         );
         let tokens = Account::withdraw<TokenType>(account, amount);
         Token::deposit<TokenType>(&mut vault.token, tokens);
-        balance<VaultPoolType, TokenType>(Signer::address_of(account))
+        amount
     }
 
     public fun balance<VaultPoolType: store, TokenType: store>(address: address): u128
