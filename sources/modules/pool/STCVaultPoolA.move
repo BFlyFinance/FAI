@@ -221,7 +221,7 @@ module STCVaultPoolA {
             WithdrawEvent {
                 pool_type: Token::token_code<STC::STC>(),
                 withdrawer: Signer::address_of(account),
-                amount: amount
+                amount: withdraw_amount
             });
         withdraw_amount
 
