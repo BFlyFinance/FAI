@@ -83,7 +83,7 @@ module Liquidation {
         let collateral_value = Exponential::mul_scalar_exp(price, collateral_amount);
         let config = Config::get<VaultPoolType>();
         let (_, _, _, _, _, _, liq_threshold) = Config::unpack<VaultPoolType>(config);
-        let liq_threshold_exp = Exponential::exp(liq_threshold, 100000u128);
+        let liq_threshold_exp = Exponential::exp(liq_threshold, 10000u128);
         let total_debt = debt_fai_amount + stability_fee;
         let debt_fai_liq_threshold_exp = Exponential::mul_scalar_exp(liq_threshold_exp, total_debt);
         let health_factor = Exponential::exp(Exponential::truncate(collateral_value), Exponential::truncate(debt_fai_liq_threshold_exp));

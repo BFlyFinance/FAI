@@ -29,7 +29,7 @@ script {
         let ccr = 30000u128;
         let max_deposit_per_vault = 1000000000000000u128;
         let liquidation_penalty = 10u128;
-        let liquidation_threshold = 150000u128;
+        let liquidation_threshold = 15000u128;
         STCVaultPoolA::initialize(&sender,
             max_mint_amount,
             min_mint_amount,

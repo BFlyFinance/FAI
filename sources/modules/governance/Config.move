@@ -7,6 +7,7 @@ module Config {
     use FaiAdmin::Admin;
 
     const DEFAULT_GLOBAL_SWITCH: bool = false;
+    const EDEPRECATED_FUNCTION: u64 = 1001;
 
     struct CapHolder<phantom VaultPoolType: copy + store + drop> has key, store {
         cap: Config::ModifyConfigCapability<VaultPoolConfig<VaultPoolType>>,
@@ -65,10 +66,8 @@ module Config {
         move_to(account, CapHolder { cap: cap });
     }
 
-    public fun update_config<VaultPoolType: copy + store + drop>(cofing: VaultPoolConfig<VaultPoolType>)
-    acquires CapHolder {
-        let holder = borrow_global_mut<CapHolder<VaultPoolType>>(Admin::admin_address());
-        Config::set_with_capability(&mut holder.cap, cofing);
+    public fun update_config<VaultPoolType: copy + store + drop>(_cofing: VaultPoolConfig<VaultPoolType>) {
+        abort Errors::deprecated(EDEPRECATED_FUNCTION)
     }
 
     public fun update_config_sign<VaultPoolType: copy + store + drop>(account: &signer, config: VaultPoolConfig<VaultPoolType>)
